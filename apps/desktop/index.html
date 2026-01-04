@@ -1,13 +1,48 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>desktop</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>HESTIA</title>
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <h1>HESTIA</h1>
+
+  <div class="card">
+    <h2>1) Dossier</h2>
+    <button id="choose-folder">Choisir un dossier</button>
+    <div id="folder-path" class="path">Aucun dossier sélectionné</div>
+  </div>
+
+  <div class="card">
+    <h2>2) Scan</h2>
+    <button id="start-scan" disabled>Lancer le scan</button>
+    <div id="scan-status">Scan : —</div>
+    <div class="progress">
+      <div id="scan-progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3) Plan</h2>
+    <button id="build-plan" disabled>Construire le plan</button>
+    <div id="plan-status">Plan : —</div>
+    <pre id="plan-preview">Aucune action</pre>
+  </div>
+
+  <div class="card">
+    <h2>4) Appliquer</h2>
+    <button id="apply-plan" disabled>Appliquer le plan</button>
+    <button id="undo-apply" disabled>Annuler (Undo)</button>
+
+    <div id="apply-status">Apply : —</div>
+    <div class="progress">
+      <div id="apply-progress-bar"></div>
+    </div>
+
+    <pre id="apply-summary">Résumé : —</pre>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
 </html>
