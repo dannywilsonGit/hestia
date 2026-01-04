@@ -11,7 +11,7 @@ final class GetScanStatus
         private ScanJobRepository $repository
     ) {}
 
-    public function execute(string $scanId): ?array
+    /* public function execute(string $scanId): ?array
     {
         $scan = $this->repository->find($scanId);
 
@@ -36,5 +36,10 @@ final class GetScanStatus
         }
 
         return $scan;
+    } */
+
+        public function execute(string $scanId): ?array
+    {
+        return $this->repository->find($scanId);
     }
 }

@@ -23,11 +23,14 @@ final class ScanController
 
         $scan = $this->startScan->execute($body['path']);
 
+
         ApiResponse::ok([
             'scanId' => $scan['scanId'],
             'status' => $scan['status'],
-            'createdAt' => $scan['createdAt']
+            'createdAt' => $scan['createdAt'],
+            'summary' => $scan['summary']
         ], 201);
+
     }
 
     public function status(string $scanId): void

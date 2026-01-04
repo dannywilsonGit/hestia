@@ -34,7 +34,7 @@ final class PlanController
             'stats' => [
                 'mkdirCount' => count(array_filter($result['actions'], fn($a) => $a['type'] === 'mkdir')),
                 'moveCount' => count(array_filter($result['actions'], fn($a) => $a['type'] === 'move')),
-                'renameCount' => count(array_filter($result['actions'], fn($a) => $a['type'] === 'rename')),
+                'renameCount' => 0,
                 'uncertainCount' => 0
             ],
             'createdAt' => $result['createdAt']

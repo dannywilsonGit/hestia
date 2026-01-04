@@ -25,7 +25,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$config = require __DIR__ . '/../config/app.php';
+$scanDefaults = $config['scan_defaults'] ?? [];
+$maxDepth = (int)($scanDefaults['max_depth'] ?? 20);
+$excludeNames = (array)($scanDefaults['exclude_names'] ?? []);
+
+
 use Hestia\Infrastructure\Service\SimpleIdGenerator;
+use Hestia\Infrastructure\Filesystem\LocalFilesystem;
 
 use Hestia\Application\UseCase\StartScan;
 use Hestia\Application\UseCase\GetScanStatus;
@@ -63,7 +70,10 @@ $undoApply = new UndoApply($applyRepo);
 
 $applyController = new ApplyController($applyPlan, $getApplyStatus, $undoApply);
 
-$startScan = new StartScan($scanRepo, $idGen);
+//$startScan = new StartScan($scanRepo, $idGen);
+$fs = new LocalFilesystem();
+$startScan = new StartScan($scanRepo, $idGen, $fs, $maxDepth, $excludeNames);
+
 $getScanStatus = new GetScanStatus($scanRepo);
 
 $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen);
