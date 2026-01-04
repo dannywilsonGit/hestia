@@ -1,4 +1,4 @@
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, confirm } from "@tauri-apps/plugin-dialog";
 import { ENGINE_BASE_URL, ENGINE_API_PREFIX } from "./config";
 
 const chooseBtn = document.getElementById("choose-folder");
@@ -18,6 +18,8 @@ const planPreviewEl = document.getElementById("plan-preview");
 const applyStatusEl = document.getElementById("apply-status");
 const applyProgressBar = document.getElementById("apply-progress-bar");
 const applySummaryEl = document.getElementById("apply-summary");
+
+const applyWarningEl = document.getElementById("apply-warning");
 
 let selectedPath = null;
 let scanId = null;
@@ -51,8 +53,12 @@ function resetAfterNewFolder() {
 
   startScanBtn.disabled = !selectedPath;
   buildPlanBtn.disabled = true;
-  applyPlanBtn.disabled = true;
-  undoApplyBtn.disabled = true;
+
+  while (!applyWarningEl.hidden) {
+    applyPlanBtn.disabled = true;
+    undoApplyBtn.disabled = true;
+  }
+  
 }
 
 async function postJson(url, payload) {
@@ -164,12 +170,41 @@ buildPlanBtn.addEventListener("click", async () => {
   }
 
   planPreviewEl.textContent = JSON.stringify(preview.json.data.actions, null, 2);
+  const actions = preview.json.data.actions || [];
+  const counts = actions.reduce(
+    (acc, a) => {
+      acc[a.type] = (acc[a.type] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  planStatusEl.textContent +=
+    ` — ${counts.move || 0} fichiers, ${counts.mkdir || 0} dossiers`;
+
   applyPlanBtn.disabled = false;
+  applyWarningEl.hidden = false;//L’utilisateur voit maintenant l’avertissement AVANT Apply.
+
 });
 
 // 4) Apply
-applyPlanBtn.addEventListener("click", async () => {
+applyPlanBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
   if (!planId) return;
+
+  const ok = await confirm(
+    "Cette action va modifier les fichiers sur votre disque.\n\nSouhaitez-vous vraiment appliquer ce plan ?",
+    { title: "HESTIA", kind: "warning" }
+  );
+
+  if (!ok) {
+    console.log("Apply cancelled by user");
+    return;
+  }
+
+  console.log("Apply confirmed by user");
 
   applyPlanBtn.disabled = true;
   undoApplyBtn.disabled = true;
@@ -192,6 +227,7 @@ applyPlanBtn.addEventListener("click", async () => {
   undoApplyBtn.disabled = false;
   applyPollTimer = setInterval(pollApply, 900);
 });
+
 
 async function pollApply() {
   if (!applyId) return;
@@ -232,7 +268,9 @@ undoApplyBtn.addEventListener("click", async () => {
     return;
   }
 
-  applyStatusEl.textContent = `Undo : ${json.data.status} (applyId=${json.data.applyId})`;
+  applyStatusEl.textContent =
+  "Undo : terminé. Les fichiers ont été restaurés (dans la mesure du possible).";
+  //applyStatusEl.textContent = `Undo : ${json.data.status} (applyId=${json.data.applyId})`;
   // Stub: on n'a pas encore endpoint GET /undo, donc on reste simple
   setTimeout(() => {
     applyStatusEl.textContent = `Undo : done (stub)`;
