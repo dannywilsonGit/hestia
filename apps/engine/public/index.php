@@ -58,17 +58,8 @@ use Hestia\Interface\Http\Controller\V1\ApplyController;
 $scanRepo = new FileScanJobRepository(__DIR__ . '/../storage/cache/scans');
 $planRepo = new FilePlanRepository(__DIR__ . '/../storage/cache/plans');
 $idGen = new SimpleIdGenerator();
-
-
-
 $applyRepo = new FileApplyRunRepository(__DIR__ . '/../storage/cache/applies');
 
-$applyPlan = new ApplyPlan($planRepo, $applyRepo, $idGen);
-$getApplyStatus = new GetApplyStatus($applyRepo);
-$undoApply = new UndoApply($applyRepo);
-
-
-$applyController = new ApplyController($applyPlan, $getApplyStatus, $undoApply);
 
 //$startScan = new StartScan($scanRepo, $idGen);
 $fs = new LocalFilesystem();
@@ -79,8 +70,13 @@ $getScanStatus = new GetScanStatus($scanRepo);
 $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen);
 $getPlanPreview = new GetPlanPreview($planRepo);
 
+$applyPlan = new ApplyPlan($planRepo, $applyRepo, $idGen, $fs);
+$getApplyStatus = new GetApplyStatus($applyRepo);
+$undoApply = new UndoApply($applyRepo, $fs);
+
 $scanController = new ScanController($startScan, $getScanStatus);
 $planController = new PlanController($buildPlan, $getPlanPreview);
+$applyController = new ApplyController($applyPlan, $getApplyStatus, $undoApply);
 
 // ------------------------------------------------------------
 // Routing ultra simple

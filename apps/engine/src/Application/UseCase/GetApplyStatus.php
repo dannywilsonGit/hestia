@@ -11,7 +11,7 @@ final class GetApplyStatus
         private ApplyRunRepository $repo
     ) {}
 
-    public function execute(string $applyId): ?array
+    /* public function execute(string $applyId): ?array
     {
         $apply = $this->repo->find($applyId);
         if (!$apply) return null;
@@ -43,5 +43,10 @@ final class GetApplyStatus
         }
 
         return $apply;
+    } */
+
+    public function execute(string $applyId): ?array
+    {
+        return $this->repo->find($applyId);
     }
 }
