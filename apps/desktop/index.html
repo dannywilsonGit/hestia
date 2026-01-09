@@ -32,8 +32,12 @@
 
   <div class="card">
     <h2>4) Appliquer</h2>
-    <button id="apply-plan" disabled>Appliquer le plan</button>
-    <button id="undo-apply" disabled>Annuler (Undo)</button>
+    <button id="apply-plan" type="button" disabled>Appliquer le plan</button>
+    <button id="undo-apply" type="button" disabled>Annuler (Undo)</button>
+    <div class="warning" id="apply-warning" hidden>
+      ⚠️ <strong>Attention :</strong> cette action va modifier vos fichiers sur le disque.<br />
+      Vérifiez la prévisualisation avant de continuer.
+    </div>
 
     <div id="apply-status">Apply : —</div>
     <div class="progress">

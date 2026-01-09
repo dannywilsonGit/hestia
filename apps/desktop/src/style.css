@@ -74,3 +74,14 @@ pre {
   max-height: 220px;
   white-space: pre-wrap;
 }
+
+.warning {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #3f1d1d;
+  border: 1px solid #7f1d1d;
+  color: #fecaca;
+  font-size: 0.9em;
+}
+
