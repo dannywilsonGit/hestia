@@ -9,10 +9,16 @@ use Hestia\Domain\Service\IdGenerator;
 
 final class BuildPlan
 {
-    private const IMAGE_EXT = ['png','jpg','jpeg','gif','webp','bmp','tiff'];
-    private const DOC_EXT   = ['odt','doc','docx','pdf','txt','rtf','md'];
+    private const IMAGE_EXT = ['jpg', 'jpeg', 'jpe', 'jps', 'png', 'gif', 'tif', 'tiff', 'ms3d', 'odg', 'otg', 'pct'];
+    private const DOC_EXT   = ['odt','doc','docx','pdf','txt','rtf','md', 'ppt', 'pptx', 'pot', 'potx', 'potm', 'pps', 'ppsx', 'pptm'];
     private const ARCH_EXT  = ['zip','rar','7z','tar','gz'];
-    
+    private const EXEC_EXT  = ['exe', 'msi'];
+    private const VIDEO_EXT  = ['avi', 'flv', 'mov', 'movie', 'mp4', 'mpe', 'mpeg', 'mpg', 'qt', 'rm', 'rmvb', 'rv', 'vob', 'wmv', 'm4a'];
+    private const AUDIO_EXT  = ['aac', 'ac3', 'aif', 'aifc', 'aiff', 'au', 'bwf', 'mp2', 'mp3', 'M4r', 'ogg', 'ogm', 'ra', 'ram', 'wma', 'wav'];
+
+
+
+
     public function __construct(
         private ScanJobRepository $scanRepo,
         private PlanRepository $planRepo,
@@ -123,6 +129,9 @@ final class BuildPlan
         if (in_array($ext, self::IMAGE_EXT, true)) return 'Images';
         if (in_array($ext, self::DOC_EXT, true)) return 'Documents';
         if (in_array($ext, self::ARCH_EXT, true)) return 'Archives';
+        if (in_array($ext, self::EXEC_EXT, true)) return 'Applications';
+        if (in_array($ext, self::VIDEO_EXT, true)) return 'Videos';
+        if (in_array($ext, self::AUDIO_EXT, true)) return 'Audios';
 
         return 'Autres';
     }
