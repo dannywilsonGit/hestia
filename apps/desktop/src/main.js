@@ -13,7 +13,6 @@ const scanStatusEl = document.getElementById("scan-status");
 const scanProgressBar = document.getElementById("scan-progress-bar");
 
 const planStatusEl = document.getElementById("plan-status");
-const planPreviewEl = document.getElementById("plan-preview");
 
 const applyStatusEl = document.getElementById("apply-status");
 const applyProgressBar = document.getElementById("apply-progress-bar");
@@ -28,6 +27,31 @@ let applyId = null;
 
 let scanPollTimer = null;
 let applyPollTimer = null;
+
+function updateStepUI(stepNumber) {
+    // 1. Update Sidebar Links
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${stepNumber}-indicator`).classList.add('active');
+    
+    // 2. Dim inactive cards, highlight active one
+    document.querySelectorAll('.glass-card').forEach((card, index) => {
+        if (index + 1 === stepNumber) {
+            card.style.opacity = "1";
+            card.style.transform = "scale(1)";
+            card.style.border = "1px solid var(--accent)";
+        } else {
+            card.style.opacity = "0.4";
+            card.style.transform = "scale(0.98)";
+            card.style.border = "1px solid var(--border)";
+        }
+    });
+
+    // 3. Smooth scroll
+    document.getElementById(`section-${stepNumber}`).scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+    });
+}
 
 function apiUrl(path) {
   return `${ENGINE_BASE_URL}${ENGINE_API_PREFIX}${path}`;
@@ -83,13 +107,28 @@ chooseBtn.addEventListener("click", async () => {
   if (typeof result === "string") {
     selectedPath = result;
     pathEl.textContent = result;
-    resetAfterNewFolder();
+
+
+    // UI Visual Logic
+    startScanBtn.disabled = false;
+    document.querySelector('.drop-zone').style.borderColor = 'var(--success)';
+
+    updateStepUI(1); // Highlights Step 1 in the sidebar
+    
+    // Optional: Auto-focus the next button to guide the user
+    startScanBtn.classList.add("pulse-animation");
   }
 });
 
 // 2) Lancer Scan
 startScanBtn.addEventListener("click", async () => {
   if (!selectedPath) return;
+
+  // Visual feedback: Move to step 2 immediately
+  updateStepUI(2);
+  startScanBtn.classList.remove("pulse-animation");
+  // Optional: Auto-focus the next button to guide the user
+  buildPlanBtn.classList.add("pulse-animation");
 
   startScanBtn.disabled = true;
   buildPlanBtn.disabled = true;
@@ -141,51 +180,134 @@ async function pollScan() {
 buildPlanBtn.addEventListener("click", async () => {
   if (!scanId) return;
 
+  // 1. UI Feedback: Disable buttons and show loading state
   buildPlanBtn.disabled = true;
   applyPlanBtn.disabled = true;
   undoApplyBtn.disabled = true;
 
-  planStatusEl.textContent = "Plan : création...";
-  planPreviewEl.textContent = "Chargement...";
+  planStatusEl.textContent = "Plan: Analyzing file structure...";
+  const treeContainer = document.getElementById("plan-preview-tree");
+  treeContainer.innerHTML = '<div class="loading-state">Generating optimal path suggestions...</div>';
 
-  const { json } = await postJson(apiUrl("/plans"), {
-    scanId,
-    template: "downloads_basic",
-  });
+  try {
+    // 2. Request plan generation from the engine
+    const { json: planResponse } = await postJson(apiUrl("/plans"), {
+      scanId,
+      template: "downloads_basic",
+    });
 
-  if (!json.ok) {
-    planStatusEl.textContent = `Plan : erreur (${json.error.code}) ${json.error.message}`;
-    buildPlanBtn.disabled = false;
-    return;
-  }
+    if (!planResponse.ok) {
+      planStatusEl.textContent = `Plan Error: ${planResponse.error.message}`;
+      buildPlanBtn.disabled = false;
+      return;
+    }
 
-  planId = json.data.planId;
-  planStatusEl.textContent = `Plan : ${json.data.status} (${planId})`;
+    planId = planResponse.data.planId;
 
-  const preview = await getJson(apiUrl(`/plans/${planId}`));
-  if (!preview.json.ok) {
-    planStatusEl.textContent = `Plan : erreur preview (${preview.json.error.code}) ${preview.json.error.message}`;
-    buildPlanBtn.disabled = false;
-    return;
-  }
+    // 3. Fetch the actual actions for the generated plan
+    const { json: preview } = await getJson(apiUrl(`/plans/${planId}`));
 
-  planPreviewEl.textContent = JSON.stringify(preview.json.data.actions, null, 2);
-  const actions = preview.json.data.actions || [];
-  const counts = actions.reduce(
-    (acc, a) => {
+    if (!preview.ok) {
+      planStatusEl.textContent = `Preview Error: ${preview.error.message}`;
+      buildPlanBtn.disabled = false;
+      return;
+    }
+
+    // 4. Process data and update the UI
+    const actions = preview.data.actions || [];
+
+
+
+      // 1. Calculate Stats
+      const totalFiles = actions.filter(a => a.type === 'move').length;
+      const newFolders = actions.filter(a => a.type === 'mkdir').length;
+
+      // 2. Update Dashboard UI
+      document.getElementById("stat-files").textContent = totalFiles;
+      document.getElementById("stat-folders").textContent = newFolders;
+      document.getElementById("stat-size").textContent = "Verified"; // Or use size logic if available
+
+      // 3. Show the dashboard
+      const dashboard = document.getElementById("plan-stats-summary");
+      dashboard.hidden = false;
+      dashboard.style.display = "grid";
+
+    // Calculate counts for the status header
+    const counts = actions.reduce((acc, a) => {
       acc[a.type] = (acc[a.type] || 0) + 1;
       return acc;
-    },
-    {}
-  );
+    }, { move: 0, mkdir: 0 });
 
-  planStatusEl.textContent +=
-    ` — ${counts.move || 0} fichiers, ${counts.mkdir || 0} dossiers`;
+    // 5. Render the beautiful tree view
+    renderFileTree(actions);
 
-  applyPlanBtn.disabled = false;
-  applyWarningEl.hidden = false;//L’utilisateur voit maintenant l’avertissement AVANT Apply.
+    // 6. Update Status text and step indicator
+    planStatusEl.textContent = `Plan generated successfully`;
+    
+    // Update the sidebar/stepper to Step 3
+    updateStepUI(3);
+    buildPlanBtn.classList.remove("pulse-animation");
+    // Optional: Auto-focus the next button to guide the user
+    applyPlanBtn.classList.add("pulse-animation");
 
+    // 7. Enable next steps
+    applyPlanBtn.disabled = false;
+    applyWarningEl.hidden = false;
+
+  } catch (error) {
+    console.error("Failed to build plan:", error);
+    planStatusEl.textContent = "Plan Error: Connection to engine failed.";
+    buildPlanBtn.disabled = false;
+  }
 });
+
+/**
+ * Helper function to render the JSON actions as a beautiful file tree
+ */
+function renderFileTree(actions) {
+  const treeContainer = document.getElementById("plan-preview-tree");
+  const countBadge = document.getElementById("file-count-badge");
+  
+  treeContainer.innerHTML = ""; 
+  countBadge.textContent = `${actions.length} Operations`;
+
+  if (actions.length === 0) {
+    treeContainer.innerHTML = '<div class="empty-state">Your files are already organized!</div>';
+    return;
+  }
+
+  actions.forEach(action => {
+    const item = document.createElement("div");
+    // Assign classes for styling based on action type
+    item.className = `tree-item ${action.type === 'move' ? 'action-move' : 'action-mkdir'}`;
+
+    let icon = action.type === 'move' ? '📦' : '📁';
+    let content = "";
+
+    if (action.type === 'move') {
+      // Get just the filename from the source path for cleaner look
+      const fileName = action.from.split(/[\\/]/).pop();
+      content = `
+        <span class="action-icon">${icon}</span>
+        <div class="tree-details">
+          <span class="tree-path-orig">${fileName}</span>
+          <span class="arrow-icon">→</span>
+          <span class="tree-path-dest">${action.to}</span>
+        </div>
+      `;
+    } else {
+      content = `
+        <span class="action-icon">${icon}</span>
+        <div class="tree-details">
+          <span class="tree-path-dest">New Directory: <strong>${action.path}</strong></span>
+        </div>
+      `;
+    }
+
+    item.innerHTML = content;
+    treeContainer.appendChild(item);
+  });
+}
 
 // 4) Apply
 applyPlanBtn.addEventListener("click", async (e) => {
@@ -203,6 +325,7 @@ applyPlanBtn.addEventListener("click", async (e) => {
     console.log("Apply cancelled by user");
     return;
   }
+  
 
   console.log("Apply confirmed by user");
 
@@ -221,11 +344,20 @@ applyPlanBtn.addEventListener("click", async (e) => {
     return;
   }
 
+  
+
   applyId = json.data.applyId;
   applyStatusEl.textContent = `Apply : ${json.data.status} (${applyId})`;
+  
 
   undoApplyBtn.disabled = false;
   applyPollTimer = setInterval(pollApply, 900);
+
+  // Update the sidebar/stepper to Step 3
+    updateStepUI(4);
+    applyPlanBtn.classList.remove("pulse-animation");
+    // Optional: Auto-focus the next button to guide the user
+    undoPlanBtn.classList.add("pulse-animation");
 });
 
 

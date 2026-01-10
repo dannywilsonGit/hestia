@@ -6,46 +6,120 @@
   <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
-  <h1>HESTIA</h1>
+  <div class="app-container">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">H</div>
+      <h1>HESTIA</h1>
+    </div>
+    <nav class="steps">
+      <div class="step active" id="step-1-indicator"><span>1</span> Selection</div>
+      <div class="step" id="step-2-indicator"><span>2</span> Analysis</div>
+      <div class="step" id="step-3-indicator"><span>3</span> Planning</div>
+      <div class="step" id="step-4-indicator"><span>4</span> Execution</div>
+      <div class="step" id="step-5-indicator"><span>5</span> See in explorer</div>
+    </nav>
+  </aside>
 
-  <div class="card">
-    <h2>1) Dossier</h2>
-    <button id="choose-folder">Choisir un dossier</button>
-    <div id="folder-path" class="path">Aucun dossier sélectionné</div>
-  </div>
-
-  <div class="card">
-    <h2>2) Scan</h2>
-    <button id="start-scan" disabled>Lancer le scan</button>
-    <div id="scan-status">Scan : —</div>
-    <div class="progress">
-      <div id="scan-progress-bar"></div>
+  <main class="content">
+    <section class="glass-card active-section" id="section-1">
+  <div class="card-header">
+    <div class="header-with-icon">
+      <div class="step-badge">Step 1</div>
+      <div>
+        <h2>Target Directory</h2>
+        <p>Where should Hestia start the magic?</p>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>3) Plan</h2>
-    <button id="build-plan" disabled>Construire le plan</button>
-    <div id="plan-status">Plan : —</div>
-    <pre id="plan-preview">Aucune action</pre>
-  </div>
-
-  <div class="card">
-    <h2>4) Appliquer</h2>
-    <button id="apply-plan" type="button" disabled>Appliquer le plan</button>
-    <button id="undo-apply" type="button" disabled>Annuler (Undo)</button>
-    <div class="warning" id="apply-warning" hidden>
-      ⚠️ <strong>Attention :</strong> cette action va modifier vos fichiers sur le disque.<br />
-      Vérifiez la prévisualisation avant de continuer.
+  <div class="selection-grid">
+    <div class="drop-zone" id="drop-zone">
+      <div class="icon-stack">
+        <span class="main-icon">📁</span>
+        <span class="sub-icon">🔍</span>
+      </div>
+      <button id="choose-folder" class="btn-primary">Browse Folders</button>
+      <div id="folder-path" class="path-badge">No folder selected</div>
     </div>
-
-    <div id="apply-status">Apply : —</div>
-    <div class="progress">
-      <div id="apply-progress-bar"></div>
+    
+    <div class="scan-action-zone">
+      <button id="start-scan" class="btn-success btn-large" disabled>
+        <span>Lancer le scan</span>
+        <small>Analyze structure & content</small>
+      </button>
     </div>
-
-    <pre id="apply-summary">Résumé : —</pre>
   </div>
+</section>
+
+    <section class="glass-card" id="section-2">
+      <div class="card-header">
+        <h2>Scanning Files</h2>
+        <div id="scan-status" class="status-tag">Status: Idle</div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-track">
+          <div id="scan-progress-bar" class="progress-fill"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="build-plan" class="btn-primary" disabled>Generate Organization Plan</button>
+      </div>
+    </section>
+
+    <section class="glass-card" id="section-3">
+      <div class="stats-dashboard" id="plan-stats-summary" hidden>
+        <div class="stat-card">
+          <span class="stat-label">Total Files</span>
+          <span class="stat-value" id="stat-files">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Folders to Create</span>
+          <span class="stat-value" id="stat-folders">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Impact</span>
+          <span class="stat-value" id="stat-size">Calculating...</span>
+        </div>
+      </div>
+      <h2>Proposed Changes</h2>
+      <div class="plan-info" id="plan-status"><h5>Waiting for scan...</h5></div>
+      <div id="apply-warning" class="warning-box" hidden>
+        <strong>⚠️ Critical:</strong> This will physically move files.
+      </div>
+      <pre id="plan-preview" hidden>No actions yet</pre>
+      
+      <div class="preview-container">
+        <div id="file-tree-header">
+          <span>Proposed Operations</span>
+          <span id="file-count-badge">0 Actions</span>  
+        </div>
+        <div id="plan-preview-tree" class="tree-view">
+          <div class="empty-state">No folder scanned yet...</div>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button id="apply-plan" class="btn-danger" disabled>Apply Organization</button>
+      </div>
+    </section>
+
+    <section class="glass-card" id="section-4">
+      <h2>Execution Result</h2>
+      <div id="apply-status" class="status-tag">Ready</div>
+      <div class="progress-container">
+        <div class="progress-track">
+          <div id="apply-progress-bar" class="progress-fill success"></div>
+        </div>
+      </div>
+      <pre id="apply-summary" class="summary-log">Summary will appear here...</pre>
+      
+      <div class="actions">
+        <button id="undo-apply" class="btn-secondary" disabled>Undo Changes</button>
+      </div>
+    </section>
+  </main>
+</div>
 
   <script type="module" src="./src/main.js"></script>
 </body>
