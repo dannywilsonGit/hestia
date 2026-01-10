@@ -120,6 +120,32 @@
     </section>
   </main>
 </div>
+<div id="success-overlay" class="success-overlay hidden">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="success-content">
+    <div class="glow-circle">
+      <div class="check-icon">L</div>
+    </div>
+    <h1>System Organized</h1>
+    <p>Hestia has successfully processed your files. Your digital space is now breathing.</p>
+    
+    <div class="success-stats">
+      <div class="mini-stat">
+        <span id="final-files">0</span>
+        <label>Moved</label>
+      </div>
+      <div class="mini-stat">
+        <span id="final-time">0.8s</span>
+        <label>Speed</label>
+      </div>
+    </div>
+
+    <div class="success-actions">
+      <button onclick="location.reload()" class="btn-primary">Organize Another Folder</button>
+      <button id="close-success" class="btn-secondary">Back to Dashboard</button>
+    </div>
+  </div>
+</div>
 
   <script type="module" src="./src/main.js"></script>
 </body>

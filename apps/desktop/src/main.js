@@ -378,12 +378,65 @@ async function pollApply() {
   applyProgressBar.style.width = `${d.progress.percent}%`;
   applySummaryEl.textContent = JSON.stringify(d.summary, null, 2);
 
-  if (d.status === "done") {
+  /* if (d.status === "done") {
     clearInterval(applyPollTimer);
     applyStatusEl.textContent = `Apply : done (${applyId})`;
     applyPlanBtn.disabled = false;
+  } */
+
+  // Add this inside pollApply where d.status === "done"
+  if (d.status === "done") {
+    clearInterval(applyPollTimer);
+    showSuccessEffect(d.summary.moved_count);
   }
 }
+
+
+function showSuccessEffect(count) {
+    const overlay = document.getElementById("success-overlay");
+    document.getElementById("final-files").textContent = count;
+    
+    overlay.classList.remove("hidden");
+    setTimeout(() => overlay.classList.add("visible"), 100);
+
+    // Simple Confetti Logic
+    triggerConfetti();
+}
+
+function triggerConfetti() {
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = Array.from({ length: 100 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 4,
+        color: Math.random() > 0.5 ? '#3b82f6' : '#10b981',
+        speed: Math.random() * 3 + 2
+    }));
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+            p.y += p.speed;
+        });
+        if (particles[0].y < canvas.height) requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// Close button logic
+document.getElementById("close-success").addEventListener("click", () => {
+    document.getElementById("success-overlay").classList.remove("visible");
+    setTimeout(() => {
+        document.getElementById("success-overlay").classList.add("hidden");
+    }, 800);
+});
+
 
 // 5) Undo
 undoApplyBtn.addEventListener("click", async () => {

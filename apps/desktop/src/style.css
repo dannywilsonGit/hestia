@@ -446,3 +446,90 @@ pre::-webkit-scrollbar-thumb:hover {
   animation: slideIn 0.4s ease forwards;
 }
 
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(6, 9, 20, 0.8);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.success-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.success-content {
+  text-align: center;
+  transform: translateY(40px);
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-overlay.visible .success-content {
+  transform: translateY(0);
+}
+
+/* The Animated Checkmark */
+.glow-circle {
+  width: 100px;
+  height: 100px;
+  background: var(--success);
+  border-radius: 50%;
+  margin: 0 auto 30px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+  position: relative;
+}
+
+.check-icon {
+  font-family: cursive;
+  font-size: 50px;
+  color: white;
+  transform: scaleX(-1) rotate(-35deg); /* Simple way to make an 'L' look like a check */
+  font-weight: bold;
+}
+
+.success-content h1 {
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+  background: linear-gradient(to right, #fff, var(--success));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.success-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+  padding: 20px;
+  border-top: 1px solid var(--card-border);
+}
+
+.mini-stat span {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+}
+
+.mini-stat label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+#confetti-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
