@@ -291,7 +291,7 @@ function renderFileTree(actions) {
         <span class="action-icon">${icon}</span>
         <div class="tree-details">
           <span class="tree-path-orig">${fileName}</span>
-          <span class="arrow-icon">→</span>
+          <span class="arrow-icon"> will be moved to </span>
           <span class="tree-path-dest">${action.to}</span>
         </div>
       `;
@@ -299,7 +299,7 @@ function renderFileTree(actions) {
       content = `
         <span class="action-icon">${icon}</span>
         <div class="tree-details">
-          <span class="tree-path-dest">New Directory: <strong>${action.path}</strong></span>
+          <span class="tree-path-dest">New Directory <strong>${action.name}</strong> will be created !</span>
         </div>
       `;
     }

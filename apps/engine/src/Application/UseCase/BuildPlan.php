@@ -72,6 +72,7 @@ final class BuildPlan
 
         $actions = [];
         $mkdirNeeded = [];
+        $dirCreated = [];
 
         foreach ($files as $f) {
             if (!isset($f['path'], $f['name'], $f['ext'])) continue;
@@ -81,6 +82,10 @@ final class BuildPlan
 
             $destDir = $root . DIRECTORY_SEPARATOR . $category;
             $mkdirNeeded[$destDir] = true;
+            if (!in_array($category , $dirCreated, true)) {
+                $dirCreated[] = $category;
+            }
+            
 
             $from = (string)$f['path'];
             $to = $destDir . DIRECTORY_SEPARATOR . (string)$f['name'];
@@ -94,9 +99,17 @@ final class BuildPlan
         }
 
         // mkdir actions (une fois par dossier)
+        $count = 0;
         foreach (array_keys($mkdirNeeded) as $dir) {
-            $actions[] = ['type' => 'mkdir', 'to' => $dir];
+            $name = $dirCreated[$count] ?? 'NewFolder';
+            $actions[] = ['type' => 'mkdir', 'to' => $dir, 'name' => $name];
+            $count++;
         }
+        /* $mkdirNeeded = count($dirCreated);
+
+        foreach ($dirCreated as $dir) {
+            $actions[] = ['type' => 'mkdir', 'to' => $dir, 'name' => $dir];
+        } */
 
         // On met mkdir d'abord (plus logique pour apply réel futur)
         usort($actions, function ($a, $b) {
