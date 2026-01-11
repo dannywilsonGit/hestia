@@ -387,7 +387,7 @@ async function pollApply() {
   // Add this inside pollApply where d.status === "done"
   if (d.status === "done") {
     clearInterval(applyPollTimer);
-    showSuccessEffect(d.summary.moved_count);
+    showSuccessEffect(d.summary.moved);
   }
 }
 
