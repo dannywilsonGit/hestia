@@ -25,6 +25,7 @@ final class BuildPlan
         private IdGenerator $ids
     ) {}
 
+
     /* public function execute(string $scanId, string $template): array
     {
         $scan = $this->scanRepo->find($scanId);
@@ -95,7 +96,7 @@ final class BuildPlan
                 'type' => 'move',
                 'from' => $from,
                 'to' => $to,
-            ];
+            ];  
         }
 
         // mkdir actions (une fois par dossier)
