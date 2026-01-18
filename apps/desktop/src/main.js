@@ -387,14 +387,15 @@ async function pollApply() {
   // Add this inside pollApply where d.status === "done"
   if (d.status === "done") {
     clearInterval(applyPollTimer);
-    showSuccessEffect(d.summary.moved);
+    showSuccessEffect(d.summary.moved, d.summary.createdFolders);
   }
 }
 
 
-function showSuccessEffect(count) {
+function showSuccessEffect(moved, createdFolders) {
     const overlay = document.getElementById("success-overlay");
-    document.getElementById("final-files").textContent = count;
+    document.getElementById("final-files").textContent = moved;
+    document.getElementById("final-folders").textContent = createdFolders;
     
     overlay.classList.remove("hidden");
     setTimeout(() => overlay.classList.add("visible"), 100);
