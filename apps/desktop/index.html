@@ -19,7 +19,7 @@
         <div class="step" id="step-2-indicator"><span>2</span> Analysis</div>
         <div class="step" id="step-3-indicator"><span>3</span> Planning</div>
         <div class="step" id="step-4-indicator"><span>4</span> Execution</div>
-        <div class="step" id="step-5-indicator"><span>5</span> See in explorer</div>
+        <button class="step Inexplorer"><span>5</span> See in explorer</button>
       </nav>
     </aside>
 
@@ -138,9 +138,7 @@
         </div>
         <pre id="apply-summary" class="summary-log" hidden>Summary will appear here...</pre>
       
-        <div class="actions">
-          <button id="undo-apply" class="btn-secondary" disabled>Undo Changes</button>
-        </div>
+        
       </section>
     </main>
   </div>
@@ -172,8 +170,15 @@
       <div class="success-actions">
         <button id="close-success" class="btn-secondary">GO Back to Dashboard</button>
         <button onclick="location.reload()" class="btn-primary">Organize Another Folder</button>
-        
       </div>
+
+      <div class="Inexplorer">
+        <button>See Results In explorer</button>
+      </div>
+
+      <div class="actions">
+          <button id="undo-apply" class="btn-secondary" disabled>Undo Changes</button>
+        </div>
     </div>
   </div>
 

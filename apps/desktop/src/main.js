@@ -1,5 +1,6 @@
 import { open, confirm } from "@tauri-apps/plugin-dialog";
 import { ENGINE_BASE_URL, ENGINE_API_PREFIX } from "./config";
+import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 
 const chooseBtn = document.getElementById("choose-folder");
 const startScanBtn = document.getElementById("start-scan");
@@ -8,6 +9,7 @@ const applyPlanBtn = document.getElementById("apply-plan");
 const undoApplyBtn = document.getElementById("undo-apply");
 
 const pathEl = document.getElementById("folder-path");
+const InexplorerBtns = document.querySelectorAll(".Inexplorer");
 
 const scanStatusEl = document.getElementById("scan-status");
 const scanProgressBar = document.getElementById("scan-progress-bar");
@@ -462,4 +464,16 @@ undoApplyBtn.addEventListener("click", async () => {
     applyStatusEl.textContent = `Undo : done (stub)`;
     undoApplyBtn.disabled = false;
   }, 900);
+});
+
+InexplorerBtns.forEach(btn => {
+  btn.addEventListener("click", async () => {
+    if (!selectedPath) return;
+    try {
+      console.log("Opening folder:", selectedPath);
+      await openPath(selectedPath); // folder path is OK
+    } catch (e) {
+console.error("openPath failed:", e);
+}
+});
 });
