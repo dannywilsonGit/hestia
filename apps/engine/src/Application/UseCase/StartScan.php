@@ -6,6 +6,7 @@ namespace Hestia\Application\UseCase;
 use Hestia\Domain\Repository\ScanJobRepository;
 use Hestia\Domain\Service\IdGenerator;
 use Hestia\Domain\Service\Filesystem;
+use Hestia\Domain\Service\TextExtractor;
 
 final class StartScan
 {
@@ -13,8 +14,10 @@ final class StartScan
         private ScanJobRepository $repository,
         private IdGenerator $idGenerator,
         private Filesystem $filesystem,
+        private TextExtractor $textExtractor,
         private int $maxDepth,
         private array $excludeNames
+        
     ) {}
 
     public function execute(string $path): array
@@ -22,6 +25,17 @@ final class StartScan
         $scanId = $this->idGenerator->generateScanId();
 
         $files = $this->filesystem->listFiles($path, $this->maxDepth, $this->excludeNames);
+
+        // Enrichissement IA (MVP): preview texte pour txt/md
+        foreach ($files as &$f) {
+            $preview = $this->textExtractor->extractPreview((string) $f['path']);
+            if ($preview === null) {
+                $f['content'] = ['status' => 'none', 'mime' => 'unknown', 'preview' => ''];
+            } else {
+                $f['content'] = $preview;
+            }
+        }
+        unset($f);
 
         $byExt = [];
         $totalBytes = 0;
