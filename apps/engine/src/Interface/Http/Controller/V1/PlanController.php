@@ -21,12 +21,32 @@ final class PlanController
             return;
         }
 
-        $result = $this->buildPlan->execute($body['scanId'], $body['template']);
+        /* $result = $this->buildPlan->execute($body['scanId'], $body['template']);
 
         if (isset($result['error']) && $result['error'] === 'SCAN_NOT_FOUND') {
             ApiResponse::fail('SCAN_NOT_FOUND', 'Scan not found', null, 404);
             return;
-        }
+        } */
+
+        $result = $this->buildPlan->execute($body['scanId'], $body['template']);
+
+if (isset($result['error']) && $result['error'] === 'SCAN_NOT_FOUND') {
+    ApiResponse::fail('SCAN_NOT_FOUND', 'Scan not found', null, 404);
+    return;
+}
+
+if (isset($result['error']) && $result['error'] === 'TEMPLATE_NOT_FOUND') {
+    ApiResponse::fail(
+        'TEMPLATE_NOT_FOUND',
+        'Template not found',
+        [
+            'template' => $result['template'] ?? null,
+            'available' => $result['available'] ?? [],
+        ],
+        400
+    );
+    return;
+}
 
         ApiResponse::ok([
             'planId' => $result['planId'],

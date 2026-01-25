@@ -22,6 +22,8 @@ const applySummaryEl = document.getElementById("apply-summary");
 
 const applyWarningEl = document.getElementById("apply-warning");
 
+const templateSelect = document.getElementById("template-select");
+
 let selectedPath = null;
 let scanId = null;
 let planId = null;
@@ -58,6 +60,35 @@ function updateStepUI(stepNumber) {
 function apiUrl(path) {
   return `${ENGINE_BASE_URL}${ENGINE_API_PREFIX}${path}`;
 }
+
+async function loadTemplates() {
+  try {
+    const { json } = await getJson(apiUrl("/templates"));
+    if (!json.ok) return;
+
+    const ids = json.data.templates || [];
+    if (!Array.isArray(ids) || ids.length === 0) return;
+
+    templateSelect.innerHTML = "";
+    ids.forEach((id) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id;
+      templateSelect.appendChild(opt);
+    });
+
+    // default safe
+    if (!ids.includes("downloads_basic")) {
+      templateSelect.value = ids[0];
+    } else {
+      templateSelect.value = "downloads_basic";
+    }
+  } catch (e) {
+    console.warn("Failed to load templates:", e);
+  }
+}
+
+loadTemplates();
 
 function resetAfterNewFolder() {
   scanId = null;
@@ -195,7 +226,7 @@ buildPlanBtn.addEventListener("click", async () => {
     // 2. Request plan generation from the engine
     const { json: planResponse } = await postJson(apiUrl("/plans"), {
       scanId,
-      template: "downloads_basic",
+      template: templateSelect.value,
     });
 
     if (!planResponse.ok) {

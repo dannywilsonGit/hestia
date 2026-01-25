@@ -42,9 +42,18 @@
               <span class="sub-icon">🔍</span>
             </div>
             <button id="choose-folder" class="btn-primary">Browse Folders</button>
+            <div style="margin-top: 12px; width: 100%; max-width: 400px;">
+              <label style="display:block; font-size:0.75rem; color: var(--text-dim); margin-bottom:6px;">
+                Organization Template
+              </label>
+              <select id="template-select" class="path-badge" style="width:100%; cursor:pointer;">
+                <option value="downloads_basic">downloads_basic</option>
+              </select>
+            </div>
             <div id="folder-path" class="path-badge">No folder selected</div>
+            
           </div>
-
+        
           <div class="scan-action-zone">
             <button id="start-scan" class="btn-success btn-large" disabled>
               <span>Lancer le scan</span>

@@ -52,6 +52,10 @@ use Hestia\Application\UseCase\GetApplyStatus;
 use Hestia\Application\UseCase\UndoApply;
 use Hestia\Interface\Http\Controller\V1\ApplyController;
 
+use Hestia\Application\Service\TemplateRegistry;
+use Hestia\Infrastructure\Service\Templates\DownloadsBasicTemplate;
+use Hestia\Infrastructure\Service\Templates\PhotosByYearMonthTemplate;
+
 // ------------------------------------------------------------
 // Bootstrap minimal (DI "à la main") — InMemory uniquement
 // ------------------------------------------------------------
@@ -67,7 +71,13 @@ $startScan = new StartScan($scanRepo, $idGen, $fs, $maxDepth, $excludeNames);
 
 $getScanStatus = new GetScanStatus($scanRepo);
 
-$buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen);
+/* $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen); */
+$templates = new TemplateRegistry([
+    new DownloadsBasicTemplate(),
+    new PhotosByYearMonthTemplate(),
+]);
+
+$buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen, $templates);
 $getPlanPreview = new GetPlanPreview($planRepo);
 
 $applyPlan = new ApplyPlan($planRepo, $applyRepo, $idGen, $fs);
@@ -141,6 +151,15 @@ if ($method === 'POST' && $path === '/v1/undo') {
     exit;
 }
 
+// --------------------
+// Templates
+// --------------------
+if ($method === 'GET' && $path === '/v1/templates') {
+    ApiResponse::ok([
+        'templates' => $templates->listIds(),
+    ]);
+    exit;
+}
 
 // Fallback
 ApiResponse::fail('NOT_FOUND', 'Route not found', ['method' => $method, 'path' => $path], 404);

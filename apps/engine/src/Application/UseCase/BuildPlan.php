@@ -6,6 +6,7 @@ namespace Hestia\Application\UseCase;
 use Hestia\Domain\Repository\ScanJobRepository;
 use Hestia\Domain\Repository\PlanRepository;
 use Hestia\Domain\Service\IdGenerator;
+use Hestia\Application\Service\TemplateRegistry;
 
 final class BuildPlan
 {
@@ -22,7 +23,8 @@ final class BuildPlan
     public function __construct(
         private ScanJobRepository $scanRepo,
         private PlanRepository $planRepo,
-        private IdGenerator $ids
+        private IdGenerator $ids,
+        private TemplateRegistry $templates
     ) {}
 
 
@@ -59,44 +61,66 @@ final class BuildPlan
         return $plan;
     } */
 
-        public function execute(string $scanId, string $template): array
+    public function execute(string $scanId, string $template): array
     {
         $scan = $this->scanRepo->find($scanId);
         if (!$scan) {
             return ['error' => 'SCAN_NOT_FOUND'];
         }
 
-        $root = rtrim((string)$scan['path'], "\\/");
+        $tpl = $this->templates->get($template);
+        if (!$tpl) {
+            return [
+                'error' => 'TEMPLATE_NOT_FOUND',
+                'template' => $template,
+                'available' => $this->templates->listIds(),
+            ];
+        }
+
+
+        $root = rtrim((string) ($scan['path'] ?? ''), "\\/");
+        $files = $scan['files'] ?? [];
+        if (!is_array($files))
+            $files = [];
+
+
+        $actions = $tpl->buildActions($root, $files);
+
+        /* $root = rtrim((string) $scan['path'], "\\/");
 
         $files = $scan['files'] ?? [];
-        if (!is_array($files)) $files = [];
+
+
+        if (!is_array($files))
+            $files = [];
 
         $actions = [];
         $mkdirNeeded = [];
         $dirCreated = [];
 
         foreach ($files as $f) {
-            if (!isset($f['path'], $f['name'], $f['ext'])) continue;
+            if (!isset($f['path'], $f['name'], $f['ext']))
+                continue;
 
-            $ext = strtolower((string)$f['ext']);
+            $ext = strtolower((string) $f['ext']);
             $category = $this->categoryForExt($ext);
 
             $destDir = $root . DIRECTORY_SEPARATOR . $category;
             $mkdirNeeded[$destDir] = true;
-            if (!in_array($category , $dirCreated, true)) {
+            if (!in_array($category, $dirCreated, true)) {
                 $dirCreated[] = $category;
             }
-            
 
-            $from = (string)$f['path'];
-            $to = $destDir . DIRECTORY_SEPARATOR . (string)$f['name'];
+
+            $from = (string) $f['path'];
+            $to = $destDir . DIRECTORY_SEPARATOR . (string) $f['name'];
 
             // On ne renomme pas en v1 (réel). On ne fait que déplacer.
             $actions[] = [
                 'type' => 'move',
                 'from' => $from,
                 'to' => $to,
-            ];  
+            ];
         }
 
         // mkdir actions (une fois par dossier)
@@ -113,9 +137,9 @@ final class BuildPlan
         } */
 
         // On met mkdir d'abord (plus logique pour apply réel futur)
-        usort($actions, function ($a, $b) {
+        /* usort($actions, function ($a, $b) {
             return ($a['type'] === 'mkdir' ? 0 : 1) <=> ($b['type'] === 'mkdir' ? 0 : 1);
-        });
+        }); */
 
         $planId = $this->ids->generatePlanId();
         $now = date(DATE_ATOM);
@@ -136,17 +160,4 @@ final class BuildPlan
         return $plan;
     }
 
-    private function categoryForExt(string $ext): string
-    {
-        if ($ext === '' || $ext === 'no_ext') return 'Autres';
-
-        if (in_array($ext, self::IMAGE_EXT, true)) return 'Images';
-        if (in_array($ext, self::DOC_EXT, true)) return 'Documents';
-        if (in_array($ext, self::ARCH_EXT, true)) return 'Archives';
-        if (in_array($ext, self::EXEC_EXT, true)) return 'Applications';
-        if (in_array($ext, self::VIDEO_EXT, true)) return 'Videos';
-        if (in_array($ext, self::AUDIO_EXT, true)) return 'Audios';
-
-        return 'Autres';
-    }
 }
