@@ -7,6 +7,8 @@ use Hestia\Domain\Repository\ScanJobRepository;
 use Hestia\Domain\Service\IdGenerator;
 use Hestia\Domain\Service\Filesystem;
 use Hestia\Domain\Service\TextExtractor;
+use Hestia\Domain\Service\DocumentClassifier;
+
 
 final class StartScan
 {
@@ -16,7 +18,8 @@ final class StartScan
         private Filesystem $filesystem,
         private TextExtractor $textExtractor,
         private int $maxDepth,
-        private array $excludeNames
+        private array $excludeNames,
+        private DocumentClassifier $classifier
         
     ) {}
 
@@ -33,6 +36,24 @@ final class StartScan
                 $f['content'] = ['status' => 'none', 'mime' => 'unknown', 'preview' => ''];
             } else {
                 $f['content'] = $preview;
+            }
+
+
+            if (($preview['status'] ?? '') === 'extracted') {
+                $f['classification'] = $this->classifier->classify(
+                    (string) ($preview['preview'] ?? ''),
+                    [
+                        'name' => (string) ($f['name'] ?? ''),
+                        'ext' => (string) ($f['ext'] ?? ''),
+                        'path' => (string) ($f['path'] ?? ''),
+                    ]
+                );
+            } else {
+                $f['classification'] = [
+                    'category' => 'Autres',
+                    'confidence' => 0.0,
+                    'signals' => ['content not extracted'],
+                ];
             }
         }
         unset($f);

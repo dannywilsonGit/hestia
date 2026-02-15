@@ -57,6 +57,8 @@ use Hestia\Infrastructure\Service\Templates\DownloadsBasicTemplate;
 use Hestia\Infrastructure\Service\Templates\PhotosByYearMonthTemplate;
 
 use Hestia\Infrastructure\Service\LocalTextExtractor;
+use Hestia\Infrastructure\Service\RulesDocumentClassifier;
+
 
 // ------------------------------------------------------------
 // Bootstrap minimal (DI "à la main") — InMemory uniquement
@@ -70,8 +72,11 @@ $applyRepo = new FileApplyRunRepository(__DIR__ . '/../storage/cache/applies');
 //$startScan = new StartScan($scanRepo, $idGen);
 $fs = new LocalFilesystem();
 $textExtractor = new LocalTextExtractor(2000);
+$classifier = new RulesDocumentClassifier();
+
+
 /* $startScan = new StartScan($scanRepo, $idGen, $fs, $maxDepth, $excludeNames); */
-$startScan = new StartScan($scanRepo, $idGen, $fs, $textExtractor, $maxDepth, $excludeNames);
+$startScan = new StartScan($scanRepo, $idGen, $fs, $textExtractor, $maxDepth, $excludeNames, $classifier);
 
 $getScanStatus = new GetScanStatus($scanRepo);
 
