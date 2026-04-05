@@ -26,6 +26,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 require __DIR__ . '/../vendor/autoload.php';
 
 $config = require __DIR__ . '/../config/app.php';
+//$aiConfig = require __DIR__ . '/../config/ai.php';
 $scanDefaults = $config['scan_defaults'] ?? [];
 $maxDepth = (int)($scanDefaults['max_depth'] ?? 20);
 $excludeNames = (array)($scanDefaults['exclude_names'] ?? []);
@@ -55,6 +56,8 @@ use Hestia\Interface\Http\Controller\V1\ApplyController;
 use Hestia\Application\Service\TemplateRegistry;
 use Hestia\Infrastructure\Service\Templates\DownloadsBasicTemplate;
 use Hestia\Infrastructure\Service\Templates\PhotosByYearMonthTemplate;
+use Hestia\Infrastructure\Service\Templates\SmartDocumentsTemplate;
+
 
 use Hestia\Infrastructure\Service\LocalTextExtractor;
 use Hestia\Infrastructure\Service\RulesDocumentClassifier;
@@ -84,6 +87,7 @@ $getScanStatus = new GetScanStatus($scanRepo);
 $templates = new TemplateRegistry([
     new DownloadsBasicTemplate(),
     new PhotosByYearMonthTemplate(),
+    new SmartDocumentsTemplate(0.25),
 ]);
 
 $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen, $templates);

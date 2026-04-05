@@ -3,163 +3,401 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>HESTIA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HESTIA - Organisation Intelligente</title>
   <link rel="stylesheet" href="./src/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-icon">H</div>
-        <h1>HESTIA</h1>
-      </div>
-      <nav class="steps">
-        <div class="step active" id="step-1-indicator"><span>1</span> Selection</div>
-        <div class="step" id="step-2-indicator"><span>2</span> Analysis</div>
-        <div class="step" id="step-3-indicator"><span>3</span> Planning</div>
-        <div class="step" id="step-4-indicator"><span>4</span> Execution</div>
-        <button class="step Inexplorer"><span>5</span> See in explorer</button>
-      </nav>
-    </aside>
 
-    <main class="content">
-      <section class="glass-card active-section" id="section-1">
-        <div class="card-header">
-          <div class="header-with-icon">
-            <div class="step-badge">Step 1</div>
-            <div>
-              <h2>Target Directory</h2>
-              <p>Where should Hestia start the magic?</p>
-            </div>
+
+  <!-- SPLASH SCREEN -->
+<div id="splash-screen" class="splash-screen">
+  <div class="splash-content">
+    <div class="splash-logo-wrapper">
+      <div class="splash-logo-3d">
+        <div class="splash-logo-inner">
+          <span class="splash-logo-letter">H</span>
+        </div>
+        <div class="splash-rings">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+        </div>
+      </div>
+      <div class="splash-text">
+        <h1 class="splash-glitch" data-text="HESTIA">HESTIA</h1>
+        <p class="splash-tagline">File Organizer</p>
+      </div>
+    </div>
+    <div class="splash-progress">
+      <div class="splash-progress-bar"></div>
+    </div>
+    <p class="splash-credit">intelligent organization</p>
+  </div>
+</div>
+
+
+
+  <!-- TOGGLE BUTTON FOR SIDEBAR -->
+  <button id="sidebar-toggle" class="sidebar-toggle">
+    <span class="toggle-icon"> H </span>
+  </button>
+
+  <!-- COLLAPSIBLE SIDEBAR -->
+  <aside id="sidebar" class="sidebar collapsed">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <h3 class="sidebar-title">ESTIA</h3>
+      </div>
+      <button id="sidebar-close" class="sidebar-close">✕</button>
+    </div>
+
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span class="section-icon">⚡</span>
+          <span>Quick Actions</span>
+        </div>
+        <div class="section-items">
+          <div class="sidebar-item" data-action="export">
+            <span class="item-icon">📤</span>
+            <span class="item-text">Export Config</span>
+          </div>
+          <div class="sidebar-item" data-action="import">
+            <span class="item-icon">📥</span>
+            <span class="item-text">Import Rules</span>
+          </div>
+          <div class="sidebar-item" data-action="backup">
+            <span class="item-icon">💾</span>
+            <span class="item-text">Backup</span>
           </div>
         </div>
+      </div>
 
-        <div class="selection-grid">
-          <div class="drop-zone" id="drop-zone">
-            <div class="icon-stack">
-              <span class="main-icon">📁</span>
-              <span class="sub-icon">🔍</span>
-            </div>
-            <button id="choose-folder" class="btn-primary">Browse Folders</button>
-            <div style="margin-top: 12px; width: 100%; max-width: 400px;">
-              <label style="display:block; font-size:0.75rem; color: var(--text-dim); margin-bottom:6px;">
-                Organization Template
-              </label>
-              <select id="template-select" class="path-badge" style="width:100%; cursor:pointer;">
-                <option value="downloads_basic">downloads_basic</option>
-              </select>
-            </div>
-            <div id="folder-path" class="path-badge">No folder selected</div>
-            
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span class="section-icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+        <div class="section-items">
+          <div class="sidebar-item" data-action="preferences">
+            <span class="item-icon">🎨</span>
+            <span class="item-text">Preferences</span>
           </div>
-        
-          <div class="scan-action-zone">
-            <button id="start-scan" class="btn-success btn-large" disabled>
-              <span>Lancer le scan</span>
-              <small>Analyze structure & content</small>
+          <div class="sidebar-item" data-action="templates">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Templates</span>
+          </div>
+          <div class="sidebar-item" data-action="rules">
+            <span class="item-icon">📏</span>
+            <span class="item-text">Custom Rules</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span class="section-icon">🕐</span>
+          <span>History</span>
+        </div>
+        <div class="section-items">
+          <div class="sidebar-item" data-action="recent">
+            <span class="item-icon">📁</span>
+            <span class="item-text">Recent Organizes</span>
+          </div>
+          <div class="sidebar-item" data-action="logs">
+            <span class="item-icon">📜</span>
+            <span class="item-text">Activity Logs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span class="section-icon">📊</span>
+          <span>Statistics</span>
+        </div>
+        <div class="section-items">
+          <div class="stat-item">
+            <span class="stat-label">Files Organized</span>
+            <span class="stat-number" id="sidebar-stats-files">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Space Saved</span>
+            <span class="stat-number" id="sidebar-stats-space">0 MB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-item" data-action="help">
+        <span class="item-icon">❓</span>
+        <span class="item-text">Help & Support</span>
+      </div>
+      <div class="sidebar-item" data-action="about">
+        <span class="item-icon">ℹ️</span>
+        <span class="item-text">About</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Navigation Progress Bar -->
+  <div class="progress-nav">
+    <div class="progress-steps">
+      <div class="progress-step completed" data-step="1">
+        <div class="step-marker">1</div>
+        <div class="step-label">Selection</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="2">
+        <div class="step-marker">2</div>
+        <div class="step-label">Analysis</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="3">
+        <div class="step-marker">3</div>
+        <div class="step-label">Planning</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="4">
+        <div class="step-marker">4</div>
+        <div class="step-label">Execution</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pages -->
+  <main class="pages-container">
+    
+    <!-- PAGE 1 : Selection -->
+    <div class="page active" id="page-1">
+      <div class="page-content">
+        <!--<div class="hero-section">
+          <div class="logo-animated-horizontal">
+            <div class="logo-3d-small">
+              <span class="logo-letter-small">H</span>
+            </div>
+            <div class="logo-text-container">
+              <h1 class="glitch-text" data-text="HESTIA">ESTIA</h1>
+              <p class="tagline">File Organizer</p>
+            </div>
+          </div>
+        </div>-->
+
+        <div class="selection-container">
+          <div class="folder-card" id="drop-zone">
+            <div class="folder-state-default">
+              <div class="folder-illustration">
+
+                
+                <div class="folder-icon-wrapper">
+                  <div class="folder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H12L10 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20Z" fill="currentColor" fill-opacity="0.3"/>
+                      <path d="M4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H12L10 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                      <circle cx="12" cy="12" r="2" fill="currentColor" fill-opacity="0.5"/>
+                    </svg>
+                  </div>
+                </div>
+
+
+                <div class="folder-text">
+                  <h3>Choose Your Directory</h3>
+                  <p>Select the folder you want to organize</p>
+                </div>
+
+              </div>
+
+              <div class="folder-actions">
+                <button id="choose-folder" class="btn-folder-select">
+                  <span class="btn-icon">📂</span>
+                  <span class="btn-text">Browse Folders</span>
+                  <span class="btn-glow"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="folder-state-selected" style="display: none;">
+              <div class="selected-success">
+                <div class="success-check">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="selected-info">
+                  <span class="selected-label">Selected Directory</span>
+                  <div class="selected-path" id="folder-path">No folder selected</div>
+                </div>
+                <button class="btn-change-folder" id="change-folder">
+                  <span>Change</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="template-section">
+              <div class="template-header">
+                <span class="template-icon">⚙️</span>
+                <span>Organization Template</span>
+                <span class="template-badge">Recommended</span>
+              </div>
+              <select id="template-select" class="template-select">
+                <option value="downloads_basic">📁 Downloads Basic</option>
+              </select>
+              <div class="template-hint">
+                <span>💡</span> Choose how Hestia organizes your files
+              </div>
+            </div>
+          </div>
+
+          <div class="navigation-buttons">
+            <button class="btn-next" id="next-to-scan" disabled>
+              Continue <span>→</span>
             </button>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
 
-
-      <section class="glass-card" id="section-2">
-        <div class="card-header">
-          <div class="header-with-icon">
-            <div class="step-badge">Step 2</div>
-            <div>
-              <h2>Scanning Files</h2>
-              <div id="scan-status" class="status-tag">Status: Idle</div>
-            </div>
-          </div>
-        </div>
-        <div class="progress-container">
-          <div class="progress-track">
-            <div id="scan-progress-bar" class="progress-fill"></div>
-          </div>
-        </div>
-        <div class="actions">
-          <button id="build-plan" class="btn-primary" disabled>Generate Organization Plan</button>
-        </div>
-      </section>
-
-
-      <section class="glass-card" id="section-3">
-        <div class="stats-dashboard" id="plan-stats-summary" hidden>
-          <div class="stat-card">
-            <span class="stat-label">Total Files</span>
-            <span class="stat-value" id="stat-files">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Folders to Create</span>
-            <span class="stat-value" id="stat-folders">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Total Impact</span>
-            <span class="stat-value" id="stat-size">Calculating...</span>
-          </div>
+    <!-- PAGE 2 : Scanning -->
+    <div class="page" id="page-2">
+      <div class="page-content">
+        <div class="scan-header">
+          <!--<div class="scan-animation">
+            <div class="radar"></div>
+            <div class="scan-line"></div>
+          </div>-->
+          <p id="scan-status" class="scan-status">Ready to scan</p>
         </div>
 
-        <div class="header-with-icon">
-          <div class="step-badge">Step 3</div>
-          <div>
-            <h3>Proposed Changes</h2>
-            <div class="plan-info" id="plan-status">
-              <h5 style = "color:rgb(205, 205, 212)">Waiting for scan...</h5>
-            </div>
+        <div class="scan-progress-container">
+          <div class="progress-circle">
+            <svg class="progress-ring" width="480" height="480">
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00f3ff" />
+                  <stop offset="50%" stop-color="#bf00ff" />
+                  <stop offset="100%" stop-color="#ff006e" />
+                </linearGradient>
+              </defs>
+              <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.1)" stroke-width="16" fill="none" r="224" cx="240"
+                cy="240" />
+              <circle class="progress-ring-fill" stroke="url(#gradient)" stroke-width="16" fill="none" r="224" cx="240" cy="240"
+                stroke-dasharray="1407.4" stroke-dashoffset="1407.4" />
+            </svg>
+            <div class="progress-percentage" id="scan-percentage">0%</div>
           </div>
-        </div>
         
-        <div id="apply-warning" class="warning-box" hidden>
-          <strong>⚠️ Critical:</strong> This will physically move files.
+          <div class="scan-details">
+            <div class="scan-stat">
+              <span class="stat-label">Files Found : </span>
+              <span class="stat-value" id="files-found">—</span>
+            </div>
+            <div class="scan-stat">
+              <span class="stat-label">Scan Status : </span>
+              <span class="stat-value" id="scan-state">Idle</span>
+            </div>
+          </div>
         </div>
-        <pre id="plan-preview" hidden>No actions yet</pre>
 
-        <div class="preview-container">
-          <div id="file-tree-header">
-            <span>Proposed Operations</span>
+        <div class="navigation-buttons">
+          <button class="btn-prev" id="prev-from-scan">← Back To Selection</button>
+          <button class="btn-next" id="next-to-plan" disabled>
+            Generate Plan →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3 : Planning -->
+    <div class="page" id="page-3">
+      <div class="page-content">
+        <div class="plan-header">
+          <div class="plan-stats" id="plan-stats-summary" style="display: none;">
+            <div class="mini-stat-card">
+              <span class="stat-icon">📄</span>
+              <span class="stat-number" id="stat-files">0</span>
+              <span class="stat-desc">Files to move</span>
+            </div>
+            <div class="mini-stat-card">
+              <span class="stat-icon">📁</span>
+              <span class="stat-number" id="stat-folders">0</span>
+              <span class="stat-desc">Folders to create</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="apply-warning" class="warning-box" style="display: none;">
+          <span>⚠️</span> This will physically move files on your disk
+        </div>
+
+        <div class="plan-preview-container">
+          <div class="preview-header">
+            <span>📋 Proposed Operations</span>
             <span id="file-count-badge">0 Actions</span>
           </div>
           <div id="plan-preview-tree" class="tree-view">
-            <div class="empty-state"><h5>No folder scanned yet...</h5></div>
+            <div class="empty-state">✨ Select a folder to begin</div>
           </div>
         </div>
 
-        <div class="actions">
-          <button id="apply-plan" class="btn-danger" disabled>Apply Organization</button>
+
+        <div class="navigation-buttons">
+          <button class="btn-prev" id="prev-from-plan">← Back To Analysis</button>
+          <button class="btn-next" id="next-to-execute" disabled>
+            Apply Changes →
+          </button>
         </div>
-      </section>
+      </div>
+    </div>
 
+    <!-- PAGE 4 : Execution -->
+    <div class="page" id="page-4">
+      <div class="page-content">
+        <div class="execution-header">
+          <div class="execution-animation">
+            <div class="particles"></div>
+            <div class="processing-icon">⚡</div>
+          </div>
+          <h2>Executing Organization</h2>
+          <p id="apply-status" class="execution-status">Ready to execute</p>
+        </div>
 
-      <section class="glass-card" id="section-4">
-        <div class="header-with-icon">
-          <div class="step-badge">Step 4</div>
-          <div>
-            <h3>Execution Result</h2>
-            <div id="apply-status" class="status-tag">Ready</div>
+        <div class="execution-progress">
+          <div class="progress-bar-container">
+            <div class="progress-bar-label">
+              <span>Progress</span>
+              <span id="apply-percentage">0%</span>
+            </div>
+            <div class="progress-track">
+              <div id="apply-progress-bar" class="progress-fill success"></div>
+            </div>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-track">
-            <div id="apply-progress-bar" class="progress-fill success"></div>
-          </div>
-        </div>
-        <pre id="apply-summary" class="summary-log" hidden>Summary will appear here...</pre>
-      
-        
-      </section>
-    </main>
-  </div>
 
-  <div id="success-overlay" class="success-overlay hidden">
+        <div id="apply-summary" class="summary-log" style="display: none;"></div>
+
+        <div class="navigation-buttons">
+          <button class="btn-prev" id="prev-from-execute">← Back To Planning</button>
+          <button class="btn-secondary" id="undo-apply" disabled>↩️ Undo Changes</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Success Modal -->
+  <div id="success-overlay" class="success-overlay">
     <canvas id="confetti-canvas"></canvas>
     <div class="success-content">
       <div class="glow-circle">
-        <div class="check-icon">L</div>
+        <div class="check-icon">✓</div>
       </div>
-      <h1>System Organized</h1>
-      <p>Hestia has successfully processed your files. Your digital space is now breathing.</p>
+      <h1>Organization Complete!</h1>
+      <p>Your files have been perfectly organized</p>
 
       <div class="success-stats">
         <div class="mini-stat">
@@ -170,24 +408,16 @@
           <span id="final-folders">0</span>
           <label>Folders Created</label>
         </div>
-        <!--<div class="mini-stat">
-          <span id="final-time">Fast</span>
-          <label>Speed</label>
-        </div>-->
       </div>
 
       <div class="success-actions">
-        <button id="close-success" class="btn-secondary">GO Back to Dashboard</button>
+        <button id="close-success" class="btn-secondary">Back to Dashboard</button>
         <button onclick="location.reload()" class="btn-primary">Organize Another Folder</button>
       </div>
 
       <div class="Inexplorer">
-        <button>See Results In explorer</button>
+        <button id="open-explorer" class="btn-secondary">📂 See Results in Explorer</button>
       </div>
-
-      <div class="actions">
-          <button id="undo-apply" class="btn-secondary" disabled>Undo Changes</button>
-        </div>
     </div>
   </div>
 
