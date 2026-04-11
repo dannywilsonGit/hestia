@@ -205,31 +205,31 @@ function initSidebarItems() {
 function handleSidebarAction(action) {
   switch(action) {
     case 'export':
-      showToast('Export feature coming soon!', 'info');
+      showToast('Export feature soon in version 2.0!', 'info');
       break;
     case 'import':
-      showToast('Import feature coming soon!', 'info');
+      showToast('Import feature soon in version 2.0!', 'info');
       break;
     case 'backup':
-      showToast('Backup feature coming soon!', 'info');
+      showToast('Backup feature soon in version 2.0!', 'info');
       break;
     case 'preferences':
-      showToast('Preferences coming soon!', 'info');
+      showToast('Preferences  soon in version 2.0!', 'info');
       break;
     case 'templates':
-      showToast('Template manager coming soon!', 'info');
+      showToast('Template manager  soon in version 2.0!', 'info');
       break;
     case 'rules':
-      showToast('Custom rules coming soon!', 'info');
+      showToast('Custom rules  soon in version 2.0!', 'info');
       break;
     case 'recent':
-      showToast('Recent organizes coming soon!', 'info');
+      showToast('Recent organizes  soon in version 2.0!', 'info');
       break;
     case 'logs':
-      showToast('Activity logs coming soon!', 'info');
+      showToast('Activity logs  soon in version 2.0!', 'info');
       break;
     case 'help':
-      showToast('Help & documentation coming soon!', 'info');
+      showToast('Help & documentation  soon in version 2.0!', 'info');
       break;
     case 'about':
       showAboutModal();

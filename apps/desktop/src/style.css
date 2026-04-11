@@ -551,7 +551,7 @@ body::before {
 }
 
 .processing-icon {
-  font-size: 60px;
+  font-size: 100px;
   animation: spin 2s linear infinite;
   position: absolute;
   top: 50%;
@@ -599,19 +599,22 @@ body::before {
   color: var(--text-secondary);
 }
 
-/* Success Modal */
+/* Success Modal - Version corrigée */
 .success-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(30px);
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.5s;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .success-overlay.visible {
@@ -619,31 +622,158 @@ body::before {
   visibility: visible;
 }
 
+/* Conteneur principal du contenu */
 .success-content {
+  position: relative;
+  z-index: 10001;
   text-align: center;
   transform: scale(0.8);
   transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-width: 500px;
+  width: 90%;
+  padding: 40px;
+  background: rgba(10, 15, 30, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 40px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
 .success-overlay.visible .success-content {
   transform: scale(1);
 }
 
+/* Canvas de confetti - doit être en arrière-plan */
+#confetti-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Glow circle */
 .glow-circle {
   width: 100px;
   height: 100px;
   background: linear-gradient(135deg, var(--neon-green), #00cc6a);
   border-radius: 50%;
-  margin: 0 auto 20px;
+  margin: 0 auto 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: glowPulse 2s infinite;
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+.check-icon {
+  font-size: 55px;
+  color: white;
+  font-weight: 800;
 }
 
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
-  50% { box-shadow: 0 0 50px rgba(0, 255, 136, 0.8); }
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(0, 255, 136, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+/* Titre */
+.success-content h1 {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.success-content p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* Statistiques */
+.success-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+}
+
+.mini-stat {
+  text-align: center;
+}
+
+.mini-stat span {
+  display: block;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--neon-cyan);
+}
+
+.mini-stat label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* Boutons */
+.success-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.Inexplorer {
+  margin-top: 10px;
+}
+
+.Inexplorer button {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .success-content {
+    padding: 30px 20px;
+    width: 95%;
+  }
+  
+  .success-stats {
+    gap: 20px;
+  }
+  
+  .mini-stat span {
+    font-size: 28px;
+  }
+  
+  .success-content h1 {
+    font-size: 24px;
+  }
+  
+  .success-actions {
+    flex-direction: column;
+  }
+  
+  .success-actions button {
+    width: 100%;
+  }
 }
 
 .check-icon {
@@ -1602,4 +1732,241 @@ body::before {
   to {
     opacity: 1;
   }
+}
+
+/* ============================================
+   SUCCESS MODAL BUTTONS - STYLE SPÉCIFIQUE
+   ============================================ */
+
+/* Conteneur des boutons d'action */
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* Bouton "Back to Dashboard" */
+.success-actions .btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  padding: 12px 28px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.success-actions .btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.success-actions .btn-secondary:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.success-actions .btn-secondary:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  transform: translateY(-2px);
+}
+
+/* Bouton "Organize Another Folder" */
+.success-actions .btn-primary {
+  background: linear-gradient(135deg, var(--neon-green), #0099ff);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+  transition: all 0.3s ease;
+}
+
+.success-actions .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.success-actions .btn-primary:hover::before {
+  width: 250px;
+  height: 250px;
+}
+
+.success-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
+}
+
+.success-actions .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Bouton "See Results in Explorer" */
+.Inexplorer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.Inexplorer button {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(191, 0, 255, 0.1));
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  color: var(--neon-cyan);
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.Inexplorer button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 243, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.Inexplorer button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.Inexplorer button:hover {
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(191, 0, 255, 0.2));
+  border-color: var(--neon-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
+}
+
+.Inexplorer button:active {
+  transform: translateY(1px);
+}
+
+/* Animation d'entrée pour les boutons */
+.success-actions button,
+.Inexplorer button {
+  animation: buttonSlideUp 0.5s ease backwards;
+}
+
+.success-actions button:nth-child(1) { animation-delay: 0.1s; }
+.success-actions button:nth-child(2) { animation-delay: 0.2s; }
+.Inexplorer button { animation-delay: 0.3s; }
+
+@keyframes buttonSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive pour les petits écrans */
+@media (max-width: 480px) {
+  .success-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .success-actions button,
+  .Inexplorer button {
+    width: 100%;
+    padding: 12px 20px;
+  }
+}
+
+
+
+
+/* Bouton Undo stylisé */
+.btn-undo {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(191, 0, 255, 0.1));
+  border: 1px solid rgba(255, 0, 110, 0.3);
+  color: var(--neon-pink);
+  padding: 14px 28px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-undo::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 0, 110, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.btn-undo:hover::before {
+  width: 250px;
+  height: 250px;
+}
+
+.btn-undo:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(191, 0, 255, 0.2));
+  border-color: var(--neon-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 0, 110, 0.3);
+}
+
+.btn-undo:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }

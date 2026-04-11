@@ -85,9 +85,8 @@ $getScanStatus = new GetScanStatus($scanRepo);
 
 /* $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen); */
 $templates = new TemplateRegistry([
-    new DownloadsBasicTemplate(),
-    new PhotosByYearMonthTemplate(),
     new SmartDocumentsTemplate(0.25),
+    new PhotosByYearMonthTemplate()
 ]);
 
 $buildPlan = new BuildPlan($scanRepo, $planRepo, $idGen, $templates);

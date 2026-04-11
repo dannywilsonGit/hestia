@@ -362,15 +362,13 @@
             <div class="particles"></div>
             <div class="processing-icon">⚡</div>
           </div>
-          <h2>Executing Organization</h2>
           <p id="apply-status" class="execution-status">Ready to execute</p>
         </div>
 
         <div class="execution-progress">
           <div class="progress-bar-container">
             <div class="progress-bar-label">
-              <span>Progress</span>
-              <span id="apply-percentage">0%</span>
+              <span id="apply-percentage" style="display: none;">0%</span>
             </div>
             <div class="progress-track">
               <div id="apply-progress-bar" class="progress-fill success"></div>
@@ -382,7 +380,6 @@
 
         <div class="navigation-buttons">
           <button class="btn-prev" id="prev-from-execute">← Back To Planning</button>
-          <button class="btn-secondary" id="undo-apply" disabled>↩️ Undo Changes</button>
         </div>
       </div>
     </div>
@@ -417,6 +414,10 @@
 
       <div class="Inexplorer">
         <button id="open-explorer" class="btn-secondary">📂 See Results in Explorer</button>
+      </div>
+
+      <div class="navigation-buttons"></div>
+        <button class="btn-undo" id="undo-apply">❌ Undo Changes</button>
       </div>
     </div>
   </div>
