@@ -61,17 +61,13 @@
           <span>Quick Actions</span>
         </div>
         <div class="section-items">
-          <div class="sidebar-item" data-action="export">
-            <span class="item-icon">📤</span>
-            <span class="item-text">Export Config</span>
-          </div>
-          <div class="sidebar-item" data-action="import">
-            <span class="item-icon">📥</span>
-            <span class="item-text">Import Rules</span>
-          </div>
           <div class="sidebar-item" data-action="backup">
             <span class="item-icon">💾</span>
             <span class="item-text">Backup</span>
+          </div>
+          <div class="sidebar-item" data-action="watch-folders">
+            <span class="item-icon">👁️</span>
+            <span class="item-text">Watched Folders</span>
           </div>
         </div>
       </div>
@@ -421,6 +417,25 @@
       </div>
     </div>
   </div>
+
+
+  <!-- afficher un vrai panneau “Watched Folders” avec la possibilité d’ajouter/supprimer des dossiers à surveiller, et une liste des dossiers actuellement surveillés. -->
+
+  <div id="watch-modal" class="success-overlay">
+  <div class="success-content">
+    <h1>Watched Folders</h1>
+    <p>Choose folders that Hestia will keep organized automatically.</p>
+
+    <div class="success-actions">
+      <button id="watch-add-folder" class="btn-primary">➕ Add watched folder</button>
+      <button id="watch-close" class="btn-secondary">Close</button>
+    </div>
+
+    <div id="watch-list" style="margin-top:20px; text-align:left;">
+      <p style="color:var(--text-dim);">No watched folders yet.</p>
+    </div>
+  </div>
+</div>
 
   <script type="module" src="./src/main.js"></script>
 </body>

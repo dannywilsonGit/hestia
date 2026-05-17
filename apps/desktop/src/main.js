@@ -16,6 +16,13 @@ const undoApplyBtn = document.getElementById("undo-apply");
 const openExplorerBtn = document.getElementById("open-explorer");
 const closeSuccessBtn = document.getElementById("close-success");
 
+// Watch folders modal elements
+
+const watchModal = document.getElementById("watch-modal");
+const watchCloseBtn = document.getElementById("watch-close");
+const watchAddFolderBtn = document.getElementById("watch-add-folder");
+const watchListEl = document.getElementById("watch-list");
+
 // State variables
 let selectedPath = null;
 let scanId = null;
@@ -204,15 +211,12 @@ function initSidebarItems() {
 // Handle sidebar actions (à compléter plus tard)
 function handleSidebarAction(action) {
   switch(action) {
-    case 'export':
-      showToast('Export feature soon in version 2.0!', 'info');
-      break;
-    case 'import':
-      showToast('Import feature soon in version 2.0!', 'info');
-      break;
     case 'backup':
       showToast('Backup feature soon in version 2.0!', 'info');
       break;
+    case 'watch-folders':
+      openWatchModal();
+    break;
     case 'preferences':
       showToast('Preferences  soon in version 2.0!', 'info');
       break;
@@ -730,6 +734,57 @@ function triggerConfetti() {
   
   draw();
 }
+
+
+// Watch folders management 
+//Fonctions pour gérer les dossiers surveillés (à compléter avec la logique réelle de surveillance des dossiers)
+
+function openWatchModal() {
+  if (!watchModal) return;
+  renderWatchFolders();
+  watchModal.classList.add("visible");
+}
+
+function closeWatchModal() {
+  if (!watchModal) return;
+  watchModal.classList.remove("visible");
+}
+
+function renderWatchFolders() {
+  const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+
+  if (!watchListEl) return;
+
+  if (items.length === 0) {
+    watchListEl.innerHTML = '<p style="color:var(--text-dim);">No watched folders yet.</p>';
+    return;
+  }
+
+  watchListEl.innerHTML = items.map((item) => `
+    <div style="padding:12px; border:1px solid var(--glass-border); border-radius:12px; margin-bottom:10px;">
+      <strong>${item.path}</strong>
+      <div style="color:var(--text-dim); font-size:12px; margin-top:6px;">
+        Template: ${item.template} · Every ${item.intervalMinutes} min · ${item.enabled ? "Active" : "Paused"}
+      </div>
+    </div>
+  `).join("");
+}
+
+
+if (watchCloseBtn) {
+  watchCloseBtn.addEventListener("click", closeWatchModal);
+}
+
+if (watchAddFolderBtn) {
+  watchAddFolderBtn.addEventListener("click", async () => {
+    showToast("Add watched folder coming next", "info");
+  });
+}
+
+
+
+
+
 
 // Navigation back buttons
 prevFromScanBtn.addEventListener("click", () => navigateToPage(1));
