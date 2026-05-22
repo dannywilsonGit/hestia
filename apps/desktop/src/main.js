@@ -1011,7 +1011,7 @@ function startWatchScheduler() {
         isWatchRunInProgress = false;
       }
 
-      break; // un seul dossier par cycle
+      //break; // un seul dossier par cycle
     }
   }, 60000);
 }
