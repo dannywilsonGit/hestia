@@ -31,6 +31,12 @@ let applyId = null;
 let scanPollTimer = null;
 let applyPollTimer = null;
 
+
+
+let watchSchedulerTimer = null;
+let isWatchRunInProgress = false;
+
+
 // Page navigation
 let currentPage = 1;
 const pages = document.querySelectorAll('.page');
@@ -750,7 +756,7 @@ function closeWatchModal() {
   watchModal.classList.remove("visible");
 }
 
-function renderWatchFolders() {
+/* function renderWatchFolders() {
   const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
 
   if (!watchListEl) return;
@@ -768,17 +774,246 @@ function renderWatchFolders() {
       </div>
     </div>
   `).join("");
+} */
+
+
+  function renderWatchFolders() {
+  const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+
+  if (!watchListEl) return;
+
+  if (items.length === 0) {
+    watchListEl.innerHTML = '<p style="color:var(--text-dim);">No watched folders yet.</p>';
+    return;
+  }
+
+  watchListEl.innerHTML = items.map((item) => `
+    <div style="padding:12px; border:1px solid var(--glass-border); border-radius:12px; margin-bottom:10px;">
+      <strong>${item.path}</strong>
+      <div style="color:var(--text-dim); font-size:12px; margin-top:6px;">
+        Template: ${item.template} · Every ${item.intervalMinutes} min · ${item.enabled ? "Active" : "Paused"}
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+  <button class="btn-next watch-run-now" data-watch-id="${item.id}">
+    Run now
+  </button>
+
+  <button class="btn-prev watch-toggle" data-watch-id="${item.id}">
+    ${item.enabled ? "Pause" : "Resume"}
+  </button>
+
+  <button class="btn-undo watch-delete" data-watch-id="${item.id}">
+    Delete
+  </button>
+</div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".watch-run-now").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.watchId;
+      await runWatchedFolderNow(id);
+    });
+  });
+
+  document.querySelectorAll(".watch-toggle").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    toggleWatchedFolder(btn.dataset.watchId);
+  });
+});
+
+document.querySelectorAll(".watch-delete").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    deleteWatchedFolder(btn.dataset.watchId);
+  });
+});
 }
+
+
+async function runWatchedFolderNow(id) {
+  const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+  const item = items.find(x => x.id === id);
+
+  if (!item) {
+    showToast("Watched folder not found", "error");
+    return;
+  }
+
+  try {
+    showToast("Running watched folder scan...", "info");
+
+    /* const { json: scanResponse } = await postJson(apiUrl("/scans"), {
+      path: item.path
+    }); */
+
+    const { json: scanResponse } = await postJson(apiUrl("/scans"), {
+      path: item.path,
+      options: {
+         rootOnly: true
+      }
+    });
+
+    if (!scanResponse.ok) {
+      showToast(`Scan error: ${scanResponse.error.message}`, "error");
+      return;
+    }
+
+    const localScanId = scanResponse.data.scanId;
+
+    const totalFiles = scanResponse.data.summary?.totalFiles || 0;
+
+    if (totalFiles === 0) {
+      showToast("No new files to organize", "info");
+      return;
+    }
+
+    const { json: planResponse } = await postJson(apiUrl("/plans"), {
+      scanId: localScanId,
+      template: item.template
+    });
+
+    if (!planResponse.ok) {
+      showToast(`Plan error: ${planResponse.error.message}`, "error");
+      return;
+    }
+
+    const localPlanId = planResponse.data.planId;
+
+    /* item.lastRunAt = new Date().toISOString();
+    item.lastPlanId = localPlanId;
+    localStorage.setItem("hestia_watch_folders", JSON.stringify(items));
+
+    showToast("Watched plan generated!", "success");
+
+    scanId = localScanId;
+    planId = localPlanId;
+
+    closeWatchModal();
+    navigateToPage(3);
+    await loadPlan(); */
+    const { json: applyResponse } = await postJson(apiUrl("/applies"), {
+  planId: localPlanId
+});
+
+if (!applyResponse.ok) {
+  showToast(`Apply error: ${applyResponse.error.message}`, "error");
+  return;
+}
+
+item.lastRunAt = new Date().toISOString();
+item.lastPlanId = localPlanId;
+item.lastApplyId = applyResponse.data.applyId;
+
+localStorage.setItem("hestia_watch_folders", JSON.stringify(items));
+
+showToast("Watched folder organized automatically!", "success");
+renderWatchFolders();
+
+  } catch (e) {
+    console.error(e);
+    showToast("Watched folder run failed", "error");
+  }
+}
+
+
+function toggleWatchedFolder(id) {
+  const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+  const item = items.find(x => x.id === id);
+
+  if (!item) {
+    showToast("Watched folder not found", "error");
+    return;
+  }
+
+  item.enabled = !item.enabled;
+
+  localStorage.setItem("hestia_watch_folders", JSON.stringify(items));
+  renderWatchFolders();
+
+  showToast(item.enabled ? "Watched folder resumed" : "Watched folder paused", "success");
+}
+
+function deleteWatchedFolder(id) {
+  const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+  const nextItems = items.filter(x => x.id !== id);
+
+  localStorage.setItem("hestia_watch_folders", JSON.stringify(nextItems));
+  renderWatchFolders();
+
+  showToast("Watched folder deleted", "success");
+}
+
+
 
 
 if (watchCloseBtn) {
   watchCloseBtn.addEventListener("click", closeWatchModal);
 }
 
-if (watchAddFolderBtn) {
+/* if (watchAddFolderBtn) {
   watchAddFolderBtn.addEventListener("click", async () => {
     showToast("Add watched folder coming next", "info");
   });
+} */
+
+  if (watchAddFolderBtn) {
+  watchAddFolderBtn.addEventListener("click", async () => {
+    const result = await open({ directory: true, multiple: false });
+
+    if (typeof result !== "string") return;
+
+    const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+
+    items.push({
+      id: crypto.randomUUID(),
+      path: result,
+      template: templateSelect.value || "downloads_basic",
+      intervalMinutes: 1,
+      enabled: true,
+      lastRunAt: null,
+      lastApplyId: null,
+      mode: "preview"
+    });
+
+    localStorage.setItem("hestia_watch_folders", JSON.stringify(items));
+    renderWatchFolders();
+    showToast("Watched folder added!", "success");
+  });
+}
+
+
+
+function startWatchScheduler() {
+  if (watchSchedulerTimer) {
+    clearInterval(watchSchedulerTimer);
+  }
+
+  watchSchedulerTimer = setInterval(async () => {
+    if (isWatchRunInProgress) return;
+    if (applyId) return; // évite conflit pendant apply manuel
+
+    const items = JSON.parse(localStorage.getItem("hestia_watch_folders") || "[]");
+    const now = Date.now();
+
+    for (const item of items) {
+      if (!item.enabled) continue;
+
+      const intervalMs = (item.intervalMinutes || 5) * 60 * 1000;
+      const lastRun = item.lastRunAt ? new Date(item.lastRunAt).getTime() : 0;
+
+      if (now - lastRun < intervalMs) continue;
+
+      isWatchRunInProgress = true;
+
+      try {
+        await runWatchedFolderNow(item.id);
+      } finally {
+        isWatchRunInProgress = false;
+      }
+
+      break; // un seul dossier par cycle
+    }
+  }, 60000);
 }
 
 
@@ -828,6 +1063,7 @@ closeSuccessBtn.addEventListener("click", () => {
 
 // Initialize
 loadTemplates();
+startWatchScheduler();
 
 // Click on progress steps to navigate
 progressSteps.forEach((step, index) => {

@@ -58,6 +58,52 @@ final class LocalFilesystem implements Filesystem
         return $files;
     }
 
+
+    public function listRootFiles(string $root, array $excludeNames): array
+    {
+    $root = rtrim($root, "\\/");
+
+    if (!is_dir($root)) {
+        return [];
+    }
+
+    $exclude = array_flip(array_map('strtolower', $excludeNames));
+    $files = [];
+
+    $items = scandir($root);
+    if ($items === false) {
+        return [];
+    }
+
+    foreach ($items as $name) {
+        if ($name === '.' || $name === '..') {
+            continue;
+        }
+
+        if (isset($exclude[strtolower($name)])) {
+            continue;
+        }
+
+        $path = $root . DIRECTORY_SEPARATOR . $name;
+
+        // Important : on ignore les dossiers
+        if (!is_file($path)) {
+            continue;
+        }
+
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        $files[] = [
+            'path' => $path,
+            'name' => $name,
+            'ext' => $ext,
+            'size' => (int)filesize($path),
+        ];
+    }
+
+    return $files;
+    }
+
     public function normalizePath(string $path): string
     {
         // realpath échoue si le path n’existe pas encore (ex: destination).

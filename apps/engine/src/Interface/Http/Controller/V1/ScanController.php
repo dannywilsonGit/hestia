@@ -21,7 +21,9 @@ final class ScanController
             return;
         }
 
-        $scan = $this->startScan->execute($body['path']);
+       /*  $scan = $this->startScan->execute($body['path']); */
+       $options = is_array($body['options'] ?? null) ? $body['options'] : [];
+       $scan = $this->startScan->execute($body['path'], $options);
 
 
         ApiResponse::ok([

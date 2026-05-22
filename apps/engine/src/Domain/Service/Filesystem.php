@@ -11,6 +11,15 @@ interface Filesystem
      */
     public function listFiles(string $root, int $maxDepth, array $excludeNames): array;
 
+
+    /**
+ * Liste uniquement les fichiers directement à la racine du dossier.
+ * Ignore les sous-dossiers.
+ *
+ * @return array<int, array{path:string, name:string, ext:string, size:int}>
+ */
+public function listRootFiles(string $root, array $excludeNames): array;
+
     /** Chemin absolu normalisé (résout .. et liens si possible). */
     public function normalizePath(string $path): string;
 

@@ -23,11 +23,19 @@ final class StartScan
         
     ) {}
 
-    public function execute(string $path): array
+    public function execute(string $path, array $options = []): array
     {
         $scanId = $this->idGenerator->generateScanId();
 
-        $files = $this->filesystem->listFiles($path, $this->maxDepth, $this->excludeNames);
+        //$files = $this->filesystem->listFiles($path, $this->maxDepth, $this->excludeNames);
+
+        $rootOnly = (bool) ($options['rootOnly'] ?? false);
+
+        if ($rootOnly) {
+            $files = $this->filesystem->listRootFiles($path, $this->excludeNames);
+        } else {
+            $files = $this->filesystem->listFiles($path, $this->maxDepth, $this->excludeNames);
+        }
 
         // Enrichissement IA (MVP): preview texte pour txt/md
         foreach ($files as &$f) {
