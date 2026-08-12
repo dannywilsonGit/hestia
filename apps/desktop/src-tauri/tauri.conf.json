@@ -3,12 +3,14 @@
   "productName": "HESTIA",
   "version": "0.1.0",
   "identifier": "com.hestia.organizer",
+
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },
+
   "app": {
     "windows": [
       {
@@ -19,13 +21,21 @@
         "fullscreen": false
       }
     ],
+
     "security": {
       "csp": null
     }
   },
+
   "bundle": {
     "active": true,
     "targets": "all",
+
+    "resources": {
+    "php/": "php/",
+    "../../engine/": "engine/"
+    },
+    
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

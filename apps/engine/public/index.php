@@ -5,6 +5,7 @@ $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowedOrigins = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://tauri.localhost',
 ];
 
 if (in_array($origin, $allowedOrigins, true)) {
